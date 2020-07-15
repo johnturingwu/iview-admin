@@ -49,3 +49,11 @@ export const getTreeSelectData = () => {
     method: 'get'
   })
 }
+
+// added
+export const getBugDensityData = () => {
+  return axios.request({
+    url: '/ro_bug_density',
+    method: 'get'
+  })
+}

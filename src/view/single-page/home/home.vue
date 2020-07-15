@@ -1,9 +1,9 @@
 <template>
   <div>
     <Row :gutter="20">
-      <i-col :xs="12" :md="8" :lg="4" v-for="(infor, i) in inforCardData" :key="`infor-${i}`" style="height: 120px;padding-bottom: 10px;">
+      <i-col :xs="12" :md="8" :lg="6" v-for="(infor, i) in inforCardData" :key="`infor-${i}`" style="height: 120px;padding-bottom: 10px;">
         <infor-card shadow :color="infor.color" :icon="infor.icon" :icon-size="36">
-          <count-to :end="infor.count" count-class="count-style"/>
+          <count-to :end="infor.count" :decimals="infor.decimals" count-class="count-style"/>
           <p>{{ infor.title }}</p>
         </infor-card>
       </i-col>
@@ -45,12 +45,10 @@ export default {
   data () {
     return {
       inforCardData: [
-        { title: '新增工时', icon: 'md-person-add', count: 803, color: '#2d8cf0' },
-        { title: '累计工时', icon: 'md-locate', count: 232, color: '#19be6b' },
+        { title: '新增工时', icon: 'md-person-add', count: 803.164, decimals: 2, color: '#2d8cf0' },
+        { title: '累计工时', icon: 'md-locate', count: 232, decimals: 2, color: '#19be6b' },
         { title: '缺陷数量', icon: 'md-help-circle', count: 142, color: '#ff9900' },
-        { title: '数据统计', icon: 'md-share', count: 657, color: '#ed3f14' },
-        { title: '内容', icon: 'md-chatbubbles', count: 12, color: '#E46CBB' },
-        { title: '访问页面', icon: 'md-map', count: 14, color: '#9A66E4' }
+        { title: '数据统计', icon: 'md-share', count: 657, color: '#ed3f14' }
       ],
       pieData: [
         { value: 335, name: '正常工时' },

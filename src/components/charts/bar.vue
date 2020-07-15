@@ -53,8 +53,8 @@ export default {
           {
             data: seriesData,
             type: 'line',
-            yAxisIndex: 1,
-          },
+            yAxisIndex: 1
+          }
         ]
       }
       this.dom = echarts.init(this.$refs.dom, 'tdTheme')

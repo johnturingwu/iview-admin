@@ -4,9 +4,11 @@
   "author": "Lison<lison16new@163.com>",
   "private": false,
   "scripts": {
-    "dev": "vue-cli-service serve --open",
+    "start:mock": "vue-cli-service serve --open",
+    "start:dev": "vue-cli-service serve --mode production --open",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
+    "lint:fix": "vue-cli-service lint --fix",
     "test:unit": "vue-cli-service test:unit",
     "test:e2e": "vue-cli-service test:e2e"
   },

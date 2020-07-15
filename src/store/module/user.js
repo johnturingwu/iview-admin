@@ -15,7 +15,7 @@ export default {
   state: {
     userName: '',
     userId: '',
-    avatarImgPath: '',
+    avatarImgPath: 'https://file.iviewui.com/dist/a0e88e83800f138b94d2414621bd9704.png',
     token: getToken(),
     access: '',
     hasGetInfo: false,
