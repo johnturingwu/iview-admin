@@ -89,6 +89,7 @@ export default {
         {
           name: 'BUG密度',
           type: 'line',
+          smooth: true,
           yAxisIndex: 1, // 索引从0开始
           data: [2.0, 2.2, 3.3, 4.5, 6.3, 10.2, 20.3, 23.4, 23.0, 16.5, 12.0, 6.2],
           color: '#2d8cf0'

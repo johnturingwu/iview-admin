@@ -51,9 +51,51 @@ export const getTreeSelectData = () => {
 }
 
 // added
-export const getBugDensityData = () => {
+export const getReopenRate = () => {
   return axios.request({
-    url: '/ro_bug_density',
+    url: '/reopen-rate',
+    method: 'get'
+  })
+}
+
+export const getOnlineBugCycle = () => {
+  return axios.request({
+    url: '/online-bug-cycle',
+    method: 'get'
+  })
+}
+
+export const getLevelByWeeks = () => {
+  return axios.request({
+    url: '/bug-level-by-weeks',
+    method: 'get'
+  })
+}
+
+export const getBugDensityBySprintTrunk = () => {
+  return axios.request({
+    url: '/bug-density-by-sprint-trunk',
+    method: 'get'
+  })
+}
+
+export const getBugDensityBySprintStudio = () => {
+  return axios.request({
+    url: '/bug-density-by-sprint-studio',
+    method: 'get'
+  })
+}
+
+export const getBugDensityByWeekTrunk = () => {
+  return axios.request({
+    url: '/bug-density-by-week-trunk',
+    method: 'get'
+  })
+}
+
+export const getBugDensityByWeekStudio = () => {
+  return axios.request({
+    url: '/bug-density-by-week-studio',
     method: 'get'
   })
 }

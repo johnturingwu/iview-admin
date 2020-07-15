@@ -11,18 +11,21 @@
     <Row :gutter="20" style="margin-top: 10px;">
       <i-col :md="24" :lg="8" style="margin-bottom: 20px;">
         <Card shadow>
-          <chart-pie style="height: 300px;" :value="pieData" text="用户访问来源"></chart-pie>
+          <h3 class="title">用户访问来源</h3>
+          <chart-pie style="height: 300px;" :value="pieData"></chart-pie>
         </Card>
       </i-col>
       <i-col :md="24" :lg="16" style="margin-bottom: 20px;">
-        <Card shadow>
-          <chart-bar style="height: 300px;" :value="barData" text="每周用户活跃量"/>
+        <Card shadow v-if="barLineData1">
+          <h3 class="title">{{bugDensityByWeekTrunkData.title}}</h3>
+          <chart-custom style="height: 300px;" :option="barLineData1"></chart-custom>
         </Card>
       </i-col>
     </Row>
-    <Row>
+    <Row v-if="barLineData2">
       <Card shadow>
-        <div ref="dom" style="height: 310px;"></div>
+        <h3 class="title">{{bugDensityByWeekStudioData.title}}</h3>
+        <chart-custom style="height: 330px;" :option="barLineData2"></chart-custom>
       </Card>
     </Row>
   </div>
@@ -31,25 +34,31 @@
 <script>
 import InforCard from '_c/info-card'
 import CountTo from '_c/count-to'
-import { ChartPie, ChartBar } from '_c/charts'
-import echarts from 'echarts'
-import { getBugDensityData } from '@/api/data'
-import { on, off } from '@/libs/tools'
+import { ChartPie, ChartBar, ChartCustom } from '_c/charts'
+import { getReopenRate, getOnlineBugCycle, getLevelByWeeks, getBugDensityBySprintTrunk, getBugDensityBySprintStudio, getBugDensityByWeekTrunk, getBugDensityByWeekStudio } from '@/api/data'
 export default {
   name: 'home',
   components: {
     InforCard,
     CountTo,
     ChartPie,
-    ChartBar
+    ChartBar,
+    ChartCustom
   },
   data () {
     return {
+      reopenRateData: null,
+      onlineBugCycleData: null,
+      levelByWeeksData: null,
+      bugDensityBySprintTrunkData: null,
+      bugDensityBySprintStudioData: null,
+      bugDensityByWeekTrunkData: null,
+      bugDensityByWeekStudioData: null,
       inforCardData: [
-        { title: '新增工时', icon: 'md-person-add', count: 803.164, decimals: 2, color: '#2d8cf0' },
-        { title: '累计工时', icon: 'md-locate', count: 232, decimals: 2, color: '#19be6b' },
-        { title: '缺陷数量', icon: 'md-help-circle', count: 142, color: '#ff9900' },
-        { title: '数据统计', icon: 'md-share', count: 657, color: '#ed3f14' }
+        { title: '****', icon: 'md-person-add', count: 0, decimals: 2, color: '#2d8cf0' },
+        { title: '****', icon: 'md-locate', count: 0, decimals: 2, color: '#19be6b' },
+        { title: '****', icon: 'md-help-circle', count: 0, decimals: 2, color: '#ff9900' },
+        { title: '****', icon: 'md-share', count: 0, decimals: 2, color: '#ed3f14' }
       ],
       pieData: [
         { value: 335, name: '正常工时' },
@@ -67,14 +76,88 @@ export default {
         Sat: 1322,
         Sun: 1324
       },
-      dom: null
+      barLineData1: null,
+      barLineData2: null
+    }
+  },
+  watch: {
+    reopenRateData (data) {
+      this.inforCardData[0].title = data.title
+      this.inforCardData[0].count = data.latest[data.latest.length - 1].split('%')[0] - 0
+    },
+    onlineBugCycleData (data) {
+
+    },
+    levelByWeeksData (data) {
+
+    },
+    bugDensityBySprintTrunkData (data) {
+      this.inforCardData[3].title = data.title
+      this.inforCardData[3].count = data.latest[data.latest.length - 1]
+    },
+    bugDensityBySprintStudioData (data) {
+
+    },
+    bugDensityByWeekTrunkData (data) {
+      this.barLineData1 = this.rebuildData(data)
+    },
+    bugDensityByWeekStudioData (data) {
+      this.barLineData2 = this.rebuildData(data)
     }
   },
   methods: {
-    resize () {
-      this.dom.resize()
+    getInitData () {
+      Promise.all([
+        getReopenRate(),
+        getOnlineBugCycle(),
+        getLevelByWeeks(),
+        getBugDensityBySprintTrunk(),
+        getBugDensityBySprintStudio(),
+        getBugDensityByWeekTrunk(),
+        getBugDensityByWeekStudio()
+      ]).then(res => {
+        console.log(res)
+        this.reopenRateData = res[0].data
+        this.onlineBugCycleData = res[1].data
+        this.levelByWeeksData = res[2].data
+        this.bugDensityBySprintTrunkData = res[3].data
+        this.bugDensityBySprintStudioData = res[4].data
+        this.bugDensityByWeekTrunkData = res[5].data
+        this.bugDensityByWeekStudioData = res[6].data
+      }).catch(err => {
+        console.log(err)
+      })
     },
-    renderData (data) {
+    rebuildData (data) {
+      const yTitles = data.columns.splice(1, data.columns.length - 1)
+      const xValues = []
+      const yValues = []
+      const colors = ['#2d8cf0', '#1bbe6a', '#ff9901', '#e46cbb']
+      yTitles.forEach((item, index) => {
+        if (index === yTitles.length - 1) {
+          yValues.push({
+            name: item,
+            type: 'line',
+            smooth: true,
+            yAxisIndex: 1, // 索引从0开始
+            data: [],
+            color: colors[colors.length - 1]
+          })
+        } else {
+          yValues.push({
+            name: item,
+            type: 'bar',
+            data: [],
+            color: colors[index]
+          })
+        }
+      })
+      data.data.forEach(item => {
+        xValues.push(item[0])
+        for (let i = 0; i < yValues.length; i++) {
+          yValues[i].data.push(item[i + 1])
+        }
+      })
       const option = {
         tooltip: {
           trigger: 'axis',
@@ -94,12 +177,12 @@ export default {
         },
         legend: {
           selectedMode: false, // 不可点击
-          data: ['BUG数量', '工作量', 'BUG密度']
+          data: yTitles
         },
         xAxis: [
           {
             type: 'category',
-            data: data.sprint_name,
+            data: xValues,
             splitLine: {
               show: true
             }
@@ -124,43 +207,13 @@ export default {
             }
           }
         ],
-        series: [
-          {
-            name: 'BUG数量',
-            type: 'bar',
-            data: data.bug_counts,
-            color: '#ff9900'
-          },
-          {
-            name: '工作量',
-            type: 'bar',
-            data: data.story_points,
-            color: '#19be6b'
-          },
-          {
-            name: 'BUG密度',
-            type: 'line',
-            smooth: true,
-            yAxisIndex: 1, // 索引从0开始
-            data: data.bug_density,
-            color: '#2d8cf0'
-          }
-        ]
+        series: yValues
       }
-      this.$nextTick(() => {
-        this.dom = echarts.init(this.$refs.dom)
-        this.dom.setOption(option)
-        on(window, 'resize', this.resize)
-      })
+      return option
     }
   },
   mounted () {
-    getBugDensityData().then(res => {
-      this.renderData(res.data)
-    })
-  },
-  beforeDestroy () {
-    off(window, 'resize', this.resize)
+    this.getInitData()
   }
 }
 </script>
@@ -168,5 +221,11 @@ export default {
 <style lang="less">
 .count-style{
   font-size: 50px;
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 16px;
+  color: #516a91;
 }
 </style>

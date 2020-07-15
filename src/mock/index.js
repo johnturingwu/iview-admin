@@ -1,6 +1,8 @@
 import Mock from 'mockjs'
 import { login, logout, getUserInfo } from './login'
-import { getTableData, getDragList, uploadImage, getOrgData, getTreeSelectData, getBugDensityData } from './data'
+import { getTableData, getDragList, uploadImage, getOrgData, getTreeSelectData,
+  getReopenRate, getOnlineBugCycle, getLevelByWeeks, getBugDensityBySprintTrunk,
+  getBugDensityBySprintStudio, getBugDensityByWeekTrunk, getBugDensityByWeekStudio } from './data'
 import { getMessageInit, getContentByMsgId, hasRead, removeReaded, restoreTrash, messageCount } from './user'
 
 // 配置Ajax请求延时，可用来测试网络延迟大时项目中一些效果
@@ -24,6 +26,13 @@ Mock.mock(/\/message\/restore/, restoreTrash)
 Mock.mock(/\/message\/count/, messageCount)
 Mock.mock(/\/get_org_data/, getOrgData)
 Mock.mock(/\/get_tree_select_data/, getTreeSelectData)
-Mock.mock(/\/ro_bug_density/, getBugDensityData)
+
+Mock.mock(/\/reopen-rate/, getReopenRate)
+Mock.mock(/\/online-bug-cycle/, getOnlineBugCycle)
+Mock.mock(/\/bug-level-by-weeks/, getLevelByWeeks)
+Mock.mock(/\/bug-density-by-sprint-trunk/, getBugDensityBySprintTrunk)
+Mock.mock(/\/bug-density-by-sprint-studio/, getBugDensityBySprintStudio)
+Mock.mock(/\/bug-density-by-week-trunk/, getBugDensityByWeekTrunk)
+Mock.mock(/\/bug-density-by-week-studio/, getBugDensityByWeekStudio)
 
 export default Mock
